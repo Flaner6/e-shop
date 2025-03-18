@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "prepare": "husky install",
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write ."
   },
   "engines": {
     "node": "22.14.0"
@@ -31,6 +33,12 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "packageManager": "pnpm@10.6.3"
 }
