@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./Chat.module.css";
+import { TextField, Button } from "@mui/material";
+import {
+  ChatContainer,
+  MessagesContainer,
+  UserMessage,
+  BotMessage,
+  InputContainer,
+} from "./Chat.styled";
 
 export default function Chat() {
   const [messages, setMessages] = useState<
@@ -33,26 +40,31 @@ export default function Chat() {
   };
 
   return (
-    <div className={styles.chatContainer}>
-      <div className={styles.messages}>
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={msg.isUser ? styles.userMessage : styles.botMessage}
-          >
-            {msg.text}
-          </div>
-        ))}
-      </div>
+    <ChatContainer elevation={3}>
+      <MessagesContainer>
+        {messages.map((msg, i) =>
+          msg.isUser ? (
+            <UserMessage key={i}>{msg.text}</UserMessage>
+          ) : (
+            <BotMessage key={i}>{msg.text}</BotMessage>
+          )
+        )}
+      </MessagesContainer>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-        />
-        <button type="submit">Send</button>
+        <InputContainer>
+          <TextField
+            fullWidth
+            size="small"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            variant="outlined"
+          />
+          <Button type="submit" variant="contained" color="primary">
+            Send
+          </Button>
+        </InputContainer>
       </form>
-    </div>
+    </ChatContainer>
   );
 }
