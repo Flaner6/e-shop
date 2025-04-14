@@ -1,18 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# E-Shop Chat Application
 
-## Getting Started
+A Next.js-based chat application with Material UI and TensorFlow.js integration.
 
-First, run the development server:
+## Tech Stack
+
+- **Framework:** Next.js 15.1.6
+- **Language:** TypeScript
+- **Styling:** Material UI v6
+- **AI/ML:** TensorFlow.js, Universal Sentence Encoder
+- **Package Manager:** pnpm 10.6.3
+- **Node Version:** 22.14.0
+
+## Key Dependencies
+
+### Production Dependencies
+
+- Next.js
+- React & React DOM
+- Material UI (@mui/material, @mui/icons-material, @mui/material-nextjs)
+- Emotion (@emotion/cache, @emotion/react, @emotion/styled)
+- TensorFlow.js (@tensorflow/tfjs)
+- Universal Sentence Encoder (@tensorflow-models/universal-sentence-encoder)
+
+### Development Dependencies
+
+- TypeScript
+- ESLint
+- Prettier
+- Husky (Git hooks)
+- lint-staged
+- TensorFlow.js Node (@tensorflow/tfjs-node)
+
+## Development Tools
+
+### Code Quality
+
+- ESLint for code linting
+- Prettier for code formatting
+- Husky for Git hooks
+- lint-staged for running checks on staged files
+
+### Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Development
+pnpm dev         # Start development server
+pnpm build       # Build production bundle
+pnpm start       # Start production server
+pnpm lint        # Run ESLint
+pnpm format      # Run Prettier
 ```
+
+## Project Structure
+
+```
+e-shop/
+├── src/
+│   ├── app/          # Next.js App Router pages
+│   ├── components/   # React components
+│   └── theme/       # MUI theme configuration
+├── public/          # Static assets
+└── ...config files
+```
+
+## Getting Started
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

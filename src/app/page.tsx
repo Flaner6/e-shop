@@ -1,13 +1,12 @@
-import Chat from "@/components/Chat";
-import styles from "./page.module.css";
+"use client";
+
+import { Container } from "@mui/material";
+import Chat from "@/components/Chat/Chat";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <h1>E-Shop AI Assistant</h1>
-        <Chat />
-      </main>
-    </div>
+    <Container maxWidth="sm" sx={{ py: 4 }}>
+      <Chat />
+    </Container>
   );
 }

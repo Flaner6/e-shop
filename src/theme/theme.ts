@@ -1,3 +1,5 @@
+"use client";
+
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
@@ -22,7 +24,7 @@ const theme = createTheme({
   shape: {
     borderRadius: 8,
   },
-  spacing: 8,
+  spacing: 4,
   typography: {
     fontFamily: "'Roboto', 'Arial', sans-serif",
     h1: {
