@@ -2,8 +2,13 @@ import { styled } from "@mui/material/styles";
 import { Paper, Box } from "@mui/material";
 
 export const ChatContainer = styled(Paper)(({ theme: { spacing } }) => ({
+  width: "300px", // Adjusted width
+  height: "400px", // Adjusted height
+  position: "fixed", // Fixed position
+  bottom: "16px", // Positioned at the bottom
+  right: "16px", // Positioned to the right
+  zIndex: 1400, // Ensure it appears above other content
   padding: spacing(2),
-  height: "500px",
   display: "flex",
   flexDirection: "column",
   gap: spacing(2),

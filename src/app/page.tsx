@@ -1,12 +1,12 @@
 "use client";
 
 import { Container } from "@mui/material";
-import Chat from "@/components/Chat/Chat";
+import { WelcomePage } from "@/components";
 
 export default function Home() {
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Chat />
+      <WelcomePage />
     </Container>
   );
 }

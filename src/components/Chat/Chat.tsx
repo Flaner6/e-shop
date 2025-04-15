@@ -10,10 +10,8 @@ import {
   InputContainer,
 } from "./Chat.styled";
 
-export default function Chat() {
-  const [messages, setMessages] = useState<
-    Array<{ text: string; isUser: boolean }>
-  >([]);
+const Chat = () => {
+  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [input, setInput] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,4 +65,6 @@ export default function Chat() {
       </form>
     </ChatContainer>
   );
-}
+};
+
+export default Chat;
