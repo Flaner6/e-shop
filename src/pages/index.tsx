@@ -1,5 +1,3 @@
-"use client";
-
 import { Container } from "@mui/material";
 import { WelcomePage } from "@/components";
 

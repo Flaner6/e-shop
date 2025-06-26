@@ -1,13 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextApiRequest, NextApiResponse } from "next";
 import * as tf from "@tensorflow/tfjs";
 import * as use from "@tensorflow-models/universal-sentence-encoder";
 
 // Store the model globally to avoid reloading
 let model: use.UniversalSentenceEncoder | null = null;
 
-export async function POST(req: Request) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
+
   try {
-    const { message } = await req.json();
+    const { message } = req.body;
 
     // Load model only once
     if (!model) {
@@ -24,13 +29,10 @@ export async function POST(req: Request) {
     // Simple response based on message content
     const response = await generateResponse(messageVector[0], message);
 
-    return NextResponse.json({ response });
+    return res.status(200).json({ response });
   } catch (error) {
     console.error("Error:", error);
-    return NextResponse.json(
-      { error: "Failed to process message" },
-      { status: 500 }
-    );
+    return res.status(500).json({ error: "Failed to process message" });
   }
 }
 
