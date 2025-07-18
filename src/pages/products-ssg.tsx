@@ -1,29 +1,28 @@
 import { ClientTimestamp } from "@/components";
+import { Container, List, ListItem, Typography } from "@mui/material";
+import { GetStaticProps } from "next";
 
 type Product = { id: number; title: string };
 
-export default function SSGDemo({
-  products,
-  fetchedAt,
-}: {
-  products: Product[];
-  fetchedAt: string;
-}) {
+export const SSGDemo = ({ products, fetchedAt }: { products: Product[]; fetchedAt: string }) => {
   return (
-    <div>
-      <h1>SSG Demo</h1>
-      <p>Server-side fetched at (build time): {fetchedAt}</p>
+    <Container sx={{ py: 4 }}>
+      <Typography variant="h3">SSG Demo</Typography>
+      <Typography variant="body1">Server-side fetched at (build time): {fetchedAt}</Typography>
       <ClientTimestamp />
-      <ul>
+      <Typography variant="h4" sx={{ mt: 4 }}>
+        🛍️ Product List
+      </Typography>
+      <List>
         {products.map((product) => (
-          <li key={product.id}>{product.title}</li>
+          <ListItem key={product.id}>{product.title}</ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
-}
+};
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const res = await fetch("https://fakestoreapi.com/products");
   const products = await res.json();
 
@@ -32,6 +31,8 @@ export async function getStaticProps() {
       products,
       fetchedAt: new Date().toLocaleTimeString(),
     },
-    revalidate: 60, // ISR support: optional
+    revalidate: 60,
   };
-}
+};
+
+export default SSGDemo;

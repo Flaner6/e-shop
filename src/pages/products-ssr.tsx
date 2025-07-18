@@ -1,65 +1,51 @@
-import { Button } from "@mui/material";
-import { GetServerSidePropsContext } from "next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { GetServerSideProps } from "next";
+import { ClientTimestamp } from "@/components";
+import { Button, Container, Typography, Box, List, ListItem } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import ReplayIcon from "@mui/icons-material/Replay";
 
 type Product = { id: number; title: string };
 
 export default function SSRDemo({
   products,
   fetchedAt,
-  userAgent,
 }: {
   products: Product[];
   fetchedAt: string;
-  userAgent: string;
 }) {
-  const [clientTime, setClientTime] = useState("");
-
-  useEffect(() => {
-    setClientTime(new Date().toLocaleTimeString());
-  }, []);
+  const [tick, setTick] = useState(0);
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-      <h1>Server-Side Rendering (SSR) Demo</h1>
+    <Container sx={{ py: 4 }}>
+      <Typography variant="h3">Server-Side Rendering (SSR) Demo</Typography>
 
-      <p>
-        <strong>Server time (on request):</strong> {fetchedAt}
-      </p>
-      <p>
-        <strong>Client time (after hydration):</strong> {clientTime}
-      </p>
-      <p>
-        <strong>User-Agent (from request headers):</strong> {userAgent}
-      </p>
+      <Typography variant="body1">Server time (on request): {fetchedAt}</Typography>
+      <ClientTimestamp key={tick} />
 
-      <Button onClick={() => window.location.reload()} style={{ marginTop: "1rem" }}>
-        🔄 Reload to Fetch Fresh Server Data
-      </Button>
+      <Box sx={{ mt: 2 }}>
+        <Button onClick={() => window.location.reload()} variant="outlined">
+          <RefreshIcon sx={{ mr: 1 }} /> Reload (fetch new server data)
+        </Button>
+        <Button onClick={() => setTick((t) => t + 1)} variant="outlined" sx={{ ml: 2 }}>
+          <ReplayIcon sx={{ mr: 1 }} /> Re-render Client Only
+        </Button>
+      </Box>
 
-      <div
-        style={{ marginTop: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "8px" }}
-      >
-        <p>
-          <strong>What this teaches you:</strong>
-          <br />
-          This page is rendered <em>on every request</em> (SSR). Notice how the server-side time
-          updates every time you reload the page, and how it can differ from the client time. This
-          shows the data is not pre-built at build time, but fetched and rendered per request.
-        </p>
-      </div>
+      <Typography variant="h4" sx={{ mt: 4 }}>
+        🛍️ Product List
+      </Typography>
 
-      <h2 style={{ marginTop: "2rem" }}>🛍️ Product List</h2>
-      <ul>
+      <List>
         {products.map((product) => (
-          <li key={product.id}>{product.title}</li>
+          <ListItem key={product.id}>{product.title}</ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps: GetServerSideProps = async () => {
   const res = await fetch("https://fakestoreapi.com/products");
   const products = await res.json();
 
@@ -67,7 +53,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       products,
       fetchedAt: new Date().toLocaleTimeString(),
-      userAgent: context.req.headers["user-agent"] || "Unknown",
     },
   };
-}
+};
