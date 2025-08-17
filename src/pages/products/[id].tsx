@@ -1,15 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import ProductPage from "@/components/products/product-page/ProductPage";
-
-type Product = {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-  rating: { rate: number; count: number };
-};
+import { getAllProducts, getProductById } from "@/lib/products";
+import type { Product } from "@/types/product";
 
 const ProductDetail = ({ product }: { product: Product }) => {
   return <ProductPage product={product} />;
@@ -18,19 +10,23 @@ const ProductDetail = ({ product }: { product: Product }) => {
 export default ProductDetail;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch("https://fakestoreapi.com/products");
-  const products = await res.json();
-  const paths = products.map((product: { id: number }) => ({
-    params: { id: product.id.toString() },
-  }));
-  return { paths, fallback: "blocking" };
+  try {
+    const products = await getAllProducts();
+    const paths = products.map((p) => ({ params: { id: String(p.id) } }));
+    return { paths, fallback: "blocking" };
+  } catch {
+
+    return { paths: [], fallback: "blocking" };
+  }
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const id = params?.id;
-  const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-  if (!res.ok) return { notFound: true };
-  const product = await res.json();
+export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ params }) => {
+  const id = Array.isArray(params?.id) ? params!.id[0] : params?.id;
+  if (!id || isNaN(Number(id))) return { notFound: true };
+
+  const product = await getProductById(id);
+  if (!product) return { notFound: true };
+
   return {
     props: { product },
     revalidate: 60,
