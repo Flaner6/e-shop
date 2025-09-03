@@ -1,36 +1,49 @@
+import { Product } from "@/types/product";
 import type { NextApiRequest, NextApiResponse } from "next";
+
+type FakeStoreProduct = {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating?: { rate: number; count: number };
+};
+
+const normalizeProduct = (raw: FakeStoreProduct): Product => ({
+  id: raw.id,
+  title: raw.title,
+  price: raw.price,
+  description: raw.description,
+  category: raw.category,
+  image: raw.image,
+  rating: raw.rating ? { rate: raw.rating.rate, count: raw.rating.count } : undefined,
+});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
-    res.status(405).end();
-    return;
+    res.setHeader("Allow", "GET");
+    return res.status(405).end();
   }
 
-  // 1) Read the dynamic param from the URL: /api/products/123 → id = "123"
-  const raw = req.query.id;
-  const id = Array.isArray(raw) ? raw[0] : raw; // safety: Next can give arrays
-
-  if (!id) {
-    res.status(400).json({ error: "Missing id" });
-    return;
-  }
+  const rawId = req.query.id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
+  if (!id) return res.status(400).json({ error: "Missing id" });
 
   try {
-    // 2) Proxy to the upstream single-product endpoint
-    const r = await fetch(`https://fakestoreapi.com/products/${id}`);
-    // 3) Map upstream statuses to ours
-    if (r.status === 404) {
-      res.status(404).json({ error: "Not found" });
-      return;
-    }
-    if (!r.ok) {
-      res.status(r.status).json({ error: "Upstream error" });
-      return;
-    }
-    // 4) Forward the JSON body if OK
-    const data = await r.json();
-    res.status(200).json(data);
+    const response = await fetch(`https://fakestoreapi.com/products/${id}`, {
+      headers: { accept: "application/json" },
+    });
+    if (response.status === 404) return res.status(404).json({ error: "Not found" });
+    if (!response.ok) return res.status(response.status).json({ error: "Upstream error" });
+
+    const raw = (await response.json()) as FakeStoreProduct;
+    const product = normalizeProduct(raw);
+
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=600");
+    return res.status(200).json(product);
   } catch {
-    res.status(502).json({ error: "Upstream unavailable" });
+    return res.status(502).json({ error: "Upstream unavailable" });
   }
 }

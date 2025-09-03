@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import ProductPage from "@/components/products/product-page/ProductPage";
-import { getAllProducts, getProductById } from "@/lib/products";
 import type { Product } from "@/types/product";
+import { getBaseUrl } from "@/lib/baseUrl";
 
 const ProductDetail = ({ product }: { product: Product }) => {
   return <ProductPage product={product} />;
@@ -10,25 +10,25 @@ const ProductDetail = ({ product }: { product: Product }) => {
 export default ProductDetail;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    const products = await getAllProducts();
-    const paths = products.map((p) => ({ params: { id: String(p.id) } }));
-    return { paths, fallback: "blocking" };
-  } catch {
+  const base = getBaseUrl();
+  const res = await fetch(`${base}/api/products`);
+  const list = (await res.json()) as { id: number }[];
 
-    return { paths: [], fallback: "blocking" };
-  }
+  const paths = list.map((p) => ({ params: { id: String(p.id) } }));
+  return { paths, fallback: "blocking" }; // new IDs work without redeploy
 };
 
 export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ params }) => {
   const id = Array.isArray(params?.id) ? params!.id[0] : params?.id;
-  if (!id || isNaN(Number(id))) return { notFound: true };
+  if (!id) return { notFound: true };
 
-  const product = await getProductById(id);
-  if (!product) return { notFound: true };
+  const base = getBaseUrl();
+  const res = await fetch(`${base}/api/products/${id}`);
 
-  return {
-    props: { product },
-    revalidate: 60,
-  };
+  if (res.status === 404) return { notFound: true };
+  if (!res.ok) throw new Error(`Internal API ${res.status}`);
+
+  const product = (await res.json()) as Product;
+
+  return { props: { product }, revalidate: 60 };
 };
