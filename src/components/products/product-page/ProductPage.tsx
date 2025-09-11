@@ -1,8 +1,6 @@
 import { Product } from "@/types/product";
 import { Container, Typography, Box, Chip, Rating } from "@mui/material";
 
-
-
 export const ProductPage = ({ product }: { product: Product }) => {
   return (
     <Container sx={{ py: 4 }}>

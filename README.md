@@ -1,128 +1,93 @@
-# E-Shop Chat Application
+# e-shop
 
-A modern **Next.js** application featuring an AI‑powered chat widget, built with **Material UI**, **TensorFlow.js**, and **Redux Toolkit**.
-
----
-
-## 🚀 Key Features
-
-- **Interactive Chat Widget**: Toggleable chat window in the lower‑right corner, powered by a Universal Sentence Encoder model in TensorFlow.js.
-- **Next.js App Router**: File‑based routing and server‐side rendering for fast page loads.
-- **Global State Management**: Redux Toolkit + React‑Redux for predictable, centralized state (e.g., chat history, UI toggles).
-- **Styling & Theming**: Material UI v6 with Emotion cache for SSR compatibility and a custom theme registry.
-- **AI/ML Integration**: Embeddings and simple response logic using `@tensorflow-models/universal-sentence-encoder`.
-- **Developer Experience**: ESLint, Prettier, Husky Git hooks, and lint‑staged for code quality enforcement.
+A demo Next.js (Pages Router) e-commerce project showcasing different data-fetching strategies, MUI theming, and a simple AI chat widget.
 
 ---
 
-## 📦 Tech Stack
+## Features
 
-- **Framework:** Next.js 15.1.6 (App Router)
-- **Language:** TypeScript
-- **Styling:** Material UI v6, Emotion
-- **State Management:** Redux Toolkit, React‑Redux
-- **AI/ML:** TensorFlow.js, Universal Sentence Encoder
-- **Package Manager:** pnpm 10.6.3
-- **Node.js Version:** >=22.14.0
+- Next.js 15 + React 19 (Pages Router)
+- MUI v6 with theme + dark mode toggle
+- Fake Store API integration with:
+  - Static Site Generation (SSG)
+  - Incremental Static Regeneration (ISR)
+  - Server-Side Rendering (SSR)
+- Custom API routes:
+  - `/api/products` → normalized products from fakestore
+  - `/api/chat` → toy AI chat using TensorFlow.js Universal Sentence Encoder
+- Middleware demo (`/middleware-ping`)
+- Chat widget floating on all pages
+- Developer experience: TypeScript, ESLint, Prettier, Husky, lint-staged
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
-e-shop/
-├── public/                # Public assets (images, fonts)
-├── src/
-│   ├── app/               # Next.js App Router pages & layout
-│   ├── components/        # Reusable UI components
-│   │   ├── Chat/          # Chat widget core (Chat, ChatWindow)
-│   │   └── ...
-│   ├── store/             # Redux store setup & slices
-│   ├── theme/             # MUI theme registry, custom theme
-│   └── styles/            # Global CSS/SCSS (if any)
-├── .husky/                # Git hooks
-├── .lintstagedrc.json     # lint‑staged config
-├── next.config.js         # Next.js configuration
-├── package.json
-└── pnpm-lock.yaml
+src/
+  components/   # UI components (Products, Chat, Welcome, etc.)
+  lib/          # helpers (e.g., baseUrl resolver for ISR/SSG)
+  pages/        # Pages Router routes and API under pages/api
+  styles/       # CSS modules and global styles
+  types/        # TypeScript types
+
+next.config.ts
+middleware.ts   # optional middleware demo
+package.json
+README.md
 ```
 
----
-
-## ⚙️ Installation & Setup
-
-1. **Clone the repo**
-
-   ```bash
-   git clone https://github.com/your‑username/e-shop.git
-   cd e-shop
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   pnpm install
-   ```
-
-3. **Initialize Git hooks**
-
-   ```bash
-   pnpm run prepare
-   ```
-
-4. **Run in development mode**
-
-   ```bash
-   pnpm dev
-   ```
-
-5. **Open your browser** at [http://localhost:3000](http://localhost:3000)
+> Note: Pages router files should live in `src/pages` (or `/pages` at project root). Do not mix `src/app` (App Router) with Pages Router.
 
 ---
 
-## 🛠️ Available Scripts
+## Getting Started
 
-| Command        | Description                          |
-| -------------- | ------------------------------------ |
-| `pnpm dev`     | Start Next.js development server     |
-| `pnpm build`   | Create optimized production build    |
-| `pnpm start`   | Run production build locally         |
-| `pnpm lint`    | Run ESLint on all `.ts`/`.tsx` files |
-| `pnpm format`  | Format codebase with Prettier        |
-| `pnpm prepare` | Install Husky Git hooks              |
+### Prerequisites
 
----
+- Node.js 20+
+- pnpm (recommended) or npm/yarn
 
-## 🧩 How It Works
+### Install & Run
 
-1. **Chat Widget Toggle**: A floating **IconButton** in the app layout opens a **Material UI Drawer**, which contains the `Chat` component.
-2. **`Chat` Component**: Manages local message state, sends user input to the `/api/chat` endpoint, and displays both user and bot messages.
-3. **API Route**: `src/app/api/chat/route.ts` loads the Universal Sentence Encoder model once, computes embeddings, and returns a simple text response based on vector magnitude and content.
-4. **Redux Integration**: (Optional) You can extend the `chatSlice` to store messages in global state, enabling features like chat history persistence across pages.
-5. **Theming & SSR**: The `ThemeRegistry` component sets up an Emotion cache and injects critical CSS on the server for seamless hydration.
+```bash
+pnpm install
+pnpm dev
+```
 
----
+Available scripts (from `package.json`):
 
-## 📚 Learning & Extensibility
-
-- **Adding ML Models**: Swap or extend the `/api/chat` logic to load custom TensorFlow.js models (e.g., image classifiers).
-- **State Persistence**: Plug in Redux Persist or localStorage to save chat history across sessions.
-- **Notifications**: Integrate Web Push or in-app toasts for incoming bot replies when the drawer is closed.
+- `pnpm dev` — Start dev server
+- `pnpm build` — Production build
+- `pnpm start` — Run production server (after build)
+- `pnpm lint` — Run ESLint + Prettier checks
 
 ---
 
-## 🤝 Contributing
+## How it works
 
-1. Fork the repo
-2. Create a feature branch (`git checkout -b feature/awesome-chat`)
-3. Commit your changes (`git commit -m "feat: add awesome feature"`)
-4. Push to the branch (`git push origin feature/awesome-chat`)
-5. Open a Pull Request
-
-Please ensure all lint checks and formatting pass before opening a PR.
+- The products pages use SSG with ISR for fast pages and SEO. Dynamic routes use `src/pages/products/[id].tsx`.
+- The project includes examples of both SSG (with `getStaticProps` / `getStaticPaths`) and SSR (with `getServerSideProps`).
+- The `api` routes provide a normalized local API layer that proxies the Fake Store API.
 
 ---
 
-## 📖 License
+## Notes
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+- Images are fetched from the Fake Store API. For production, add `next/image` remote patterns in `next.config`.
+- The AI chat (`/api/chat`) is a toy demo. It loads TensorFlow.js and may be heavy on cold starts.
+- Middleware is optional and runs at the project root (`middleware.ts`). Middleware logs appear in the server terminal, not in the browser console.
+
+---
+
+## Roadmap / TODO
+
+- Add a Redux Toolkit shopping cart and persist across pages
+- Wire MUI SSR helpers (Emotion cache) to avoid style flicker
+- Clean up dependencies and move dev-only packages to `devDependencies`
+- Add `next/image` remote patterns for fakestore images
+- (Optional) Migrate to App Router for RSC/layouts if needed
+
+---
+
+REMOVED
