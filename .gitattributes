@@ -1,0 +1,17 @@
+*           text=auto eol=lf
+
+# Known binary types (never touch line endings)
+*.png       -text
+*.jpg       -text
+*.jpeg      -text
+*.gif       -text
+*.ico       -text
+*.pdf       -text
+*.woff*     -text
+*.ttf       -text
+*.eot       -text
+*.zip       -text
+
+# Windows-specific scripts (keep CRLF if needed)
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
