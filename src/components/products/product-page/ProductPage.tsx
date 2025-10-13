@@ -1,5 +1,5 @@
 import { Product } from "@/types/product";
-import { Container, Typography, Box, Chip, Rating } from "@mui/material";
+import { Container, Typography, Box, Chip, Rating, Button } from "@mui/material";
 
 export const ProductPage = ({ product }: { product: Product }) => {
   return (
@@ -23,13 +23,16 @@ export const ProductPage = ({ product }: { product: Product }) => {
             {product.description}
           </Typography>
           {product.rating && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
               <Rating value={product.rating.rate} precision={0.1} readOnly />
               <Typography variant="body2">
                 ({product.rating.rate} / 5, {product.rating.count} reviews)
               </Typography>
             </Box>
           )}
+          <Button variant="contained" onClick={() => console.log("Clicked Add to Cart:", product)}>
+            Add to Cart
+          </Button>
         </Box>
       </Box>
     </Container>
