@@ -1,7 +1,23 @@
 import { Product } from "@/types/product";
 import { Container, Typography, Box, Chip, Rating, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { addCartItem } from "@/models/cart/actions";
+import type { AppDispatch } from "@/store/createStore";
 
 export const ProductPage = ({ product }: { product: Product }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleAdd = () => {
+    dispatch(
+      addCartItem({
+        id: String(product.id),
+        title: product.title,
+        price: product.price,
+        image: product.image,
+      })
+    );
+  };
+
   return (
     <Container sx={{ py: 4 }}>
       <Typography variant="h4" gutterBottom>
@@ -30,7 +46,7 @@ export const ProductPage = ({ product }: { product: Product }) => {
               </Typography>
             </Box>
           )}
-          <Button variant="contained" onClick={() => console.log("Clicked Add to Cart:", product)}>
+          <Button variant="contained" onClick={handleAdd}>
             Add to Cart
           </Button>
         </Box>

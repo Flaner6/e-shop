@@ -14,15 +14,12 @@ const WelcomePage = () => {
         <Typography variant="h6" gutterBottom>
           Start Shopping Today
         </Typography>
-        <Typography paragraph color="text.secondary">
+        <Typography color="text.secondary">
           Discover our amazing products and great deals
         </Typography>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 5, mt: 3 }}>
           <Button component={Link} href="/products" variant="contained" color="primary">
-            Static Products
-          </Button>
-          <Button component={Link} href="/products-ssr" variant="outlined" color="primary">
-            Server-side Products
+            Products
           </Button>
         </Box>
       </Paper>
