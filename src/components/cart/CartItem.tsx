@@ -1,4 +1,6 @@
 import { Box, IconButton, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import type { CartItem as CartItemType } from "@/models/cart/types";
@@ -6,9 +8,11 @@ import type { CartItem as CartItemType } from "@/models/cart/types";
 interface CartItemProps {
   item: CartItemType;
   onRemove?: (id: string) => void;
+  onIncrement?: (id: string) => void;
+  onDecrement?: (id: string) => void;
 }
 
-const CartItem: React.FC<CartItemProps> = ({ item, onRemove }) => {
+const CartItem: React.FC<CartItemProps> = ({ item, onRemove, onIncrement, onDecrement }) => {
   return (
     <Box
       display="flex"
@@ -43,6 +47,23 @@ const CartItem: React.FC<CartItemProps> = ({ item, onRemove }) => {
         <Typography variant="body2" color="text.secondary">
           ${item.price.toFixed(2)}
         </Typography>
+        <Box display="flex" alignItems="center" gap={1} mt={1}>
+          <IconButton
+            size="small"
+            onClick={() => onDecrement?.(item.id)}
+            aria-label="Decrease quantity"
+          >
+            <RemoveIcon fontSize="small" />
+          </IconButton>
+          <Typography variant="body2">{item.quantity}</Typography>
+          <IconButton
+            size="small"
+            onClick={() => onIncrement?.(item.id)}
+            aria-label="Increase quantity"
+          >
+            <AddIcon fontSize="small" />
+          </IconButton>
+        </Box>
       </Box>
 
       {onRemove && (

@@ -7,3 +7,11 @@ export type Product = {
   image: string;
   rating?: { rate: number; count: number };
 };
+
+export type CartItem = {
+  id: string;
+  title: string;
+  price: number;
+  image?: string;
+  quantity: number;
+};

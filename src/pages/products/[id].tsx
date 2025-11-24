@@ -1,10 +1,22 @@
+// src/pages/products/[id].tsx
 import { GetStaticPaths, GetStaticProps } from "next";
-import ProductPage from "@/components/products/product-page/ProductPage";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+
+import ConnectedProductPage from "@/components/products/product-page/ProductPage";
 import type { Product } from "@/types/product";
 import { getBaseUrl } from "@/lib/baseUrl";
+import { setProduct } from "@/models/products/actions";
+import type { AppDispatch } from "@/store/createStore";
 
 const ProductDetail = ({ product }: { product: Product }) => {
-  return <ProductPage product={product} />;
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(setProduct(product));
+  }, [dispatch, product]);
+
+  return <ConnectedProductPage productId={product.id} />;
 };
 
 export default ProductDetail;
@@ -15,7 +27,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const list = (await res.json()) as { id: number }[];
 
   const paths = list.map((p) => ({ params: { id: String(p.id) } }));
-  return { paths, fallback: "blocking" }; // new IDs work without redeploy
+  return { paths, fallback: "blocking" };
 };
 
 export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ params }) => {

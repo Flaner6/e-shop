@@ -1,1 +1,7 @@
-export { addCartItem } from "./slice";
+export {
+  addCartItem,
+  incrementCartItem,
+  decrementCartItem,
+  removeAllOfProduct,
+  clearCart,
+} from "./slice";

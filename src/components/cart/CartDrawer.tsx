@@ -1,22 +1,50 @@
 import { Box, Button, Divider, Drawer, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useSelector } from "react-redux";
-import { selectCartItems } from "@/models/cart/selectors";
-import type { RootState } from "@/store/createStore";
-import CartItem from "./CartItem";
+import { connect } from "react-redux";
 
-interface CartDrawerProps {
+import CartItem from "./CartItem";
+import type { AppDispatch, RootState } from "@/store/createStore";
+import { selectCartItems, selectCartSubtotal } from "@/models/cart/selectors";
+import { removeAllOfProduct, incrementCartItem, decrementCartItem } from "@/models/cart/actions";
+import type { CartItem as CartItemType } from "@/models/cart/types";
+
+interface OwnProps {
   open: boolean;
   onClose: () => void;
 }
 
-const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
-  const items = useSelector<RootState, ReturnType<typeof selectCartItems>>(selectCartItems);
-  const subtotal = items.reduce((sum, it) => sum + it.price, 0);
+interface StateProps {
+  items: CartItemType[];
+  subtotal: number;
+}
 
+interface DispatchProps {
+  removeProduct: (id: string) => void;
+  incrementProduct: (id: string) => void;
+  decrementProduct: (id: string) => void;
+}
+
+type Props = OwnProps & StateProps & DispatchProps;
+
+const CartDrawer: React.FC<Props> = ({
+  open,
+  onClose,
+  items,
+  subtotal,
+  removeProduct,
+  incrementProduct,
+  decrementProduct,
+}) => {
   const handleRemove = (id: string) => {
-    console.log("TODO: remove from cart:", id);
-    // Future: dispatch(removeCartItem(id));
+    removeProduct(id);
+  };
+
+  const handleIncrement = (id: string) => {
+    incrementProduct(id);
+  };
+
+  const handleDecrement = (id: string) => {
+    decrementProduct(id);
   };
 
   return (
@@ -41,7 +69,15 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
               </Typography>
             </Box>
           ) : (
-            items.map((it) => <CartItem key={it.id} item={it} onRemove={handleRemove} />)
+            items.map((item) => (
+              <CartItem
+                key={item.id}
+                item={item}
+                onRemove={handleRemove}
+                onIncrement={handleIncrement}
+                onDecrement={handleDecrement}
+              />
+            ))
           )}
         </Box>
 
@@ -59,4 +95,15 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
   );
 };
 
-export default CartDrawer;
+const mapStateToProps = (state: RootState): StateProps => ({
+  items: selectCartItems(state),
+  subtotal: selectCartSubtotal(state),
+});
+
+const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => ({
+  removeProduct: (id: string) => dispatch(removeAllOfProduct(id)),
+  incrementProduct: (id: string) => dispatch(incrementCartItem(id)),
+  decrementProduct: (id: string) => dispatch(decrementCartItem(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CartDrawer);
