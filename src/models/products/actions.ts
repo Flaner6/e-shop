@@ -1,1 +1,1 @@
-export { setProduct, setProductsBatch, clearProducts } from "./slice";
+export { setProduct, setProductsBatch, clearProduct } from "./slice";

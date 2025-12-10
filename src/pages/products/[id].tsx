@@ -1,22 +1,17 @@
-// src/pages/products/[id].tsx
-import { GetStaticPaths, GetStaticProps } from "next";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { GetStaticPaths } from "next";
 
 import ConnectedProductPage from "@/components/products/product-page/ProductPage";
 import type { Product } from "@/types/product";
 import { getBaseUrl } from "@/lib/baseUrl";
 import { setProduct } from "@/models/products/actions";
-import type { AppDispatch } from "@/store/createStore";
+import { wrapper } from "@/store/createStore";
 
-const ProductDetail = ({ product }: { product: Product }) => {
-  const dispatch = useDispatch<AppDispatch>();
+type ProductDetailProps = {
+  productId: number;
+};
 
-  useEffect(() => {
-    dispatch(setProduct(product));
-  }, [dispatch, product]);
-
-  return <ConnectedProductPage productId={product.id} />;
+const ProductDetail = ({ productId }: ProductDetailProps) => {
+  return <ConnectedProductPage productId={productId} />;
 };
 
 export default ProductDetail;
@@ -30,17 +25,22 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return { paths, fallback: "blocking" };
 };
 
-export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ params }) => {
-  const id = Array.isArray(params?.id) ? params!.id[0] : params?.id;
-  if (!id) return { notFound: true };
+export const getStaticProps = wrapper.getStaticProps((store) => async ({ params }) => {
+  const idParam = Array.isArray(params?.id) ? params!.id[0] : params?.id;
+  if (!idParam) return { notFound: true };
 
   const base = getBaseUrl();
-  const res = await fetch(`${base}/api/products/${id}`);
+  const res = await fetch(`${base}/api/products/${idParam}`);
 
   if (res.status === 404) return { notFound: true };
   if (!res.ok) throw new Error(`Internal API ${res.status}`);
 
   const product = (await res.json()) as Product;
 
-  return { props: { product }, revalidate: 60 };
-};
+  store.dispatch(setProduct(product));
+
+  return {
+    props: { productId: product.id },
+    revalidate: 60,
+  };
+});

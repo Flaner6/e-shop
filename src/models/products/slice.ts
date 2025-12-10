@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
 import type { Product } from "@/types/product";
+import { HydrateAction } from "@/store/types";
 
 export type ProductsState = {
   byId: Record<number, Product>;
@@ -10,7 +12,7 @@ const initialState: ProductsState = {
 };
 
 const productsSlice = createSlice({
-  name: "products",
+  name: "product",
   initialState,
   reducers: {
     setProduct: (state, action: PayloadAction<Product>) => {
@@ -21,12 +23,22 @@ const productsSlice = createSlice({
         state.byId[p.id] = p;
       }
     },
-    clearProducts: (state) => {
+    clearProduct: (state) => {
       state.byId = {};
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(HYDRATE, (state, action: HydrateAction) => {
+      const incoming = action.payload.product as ProductsState | undefined;
+      if (!incoming) return state;
+      return {
+        ...state,
+        ...incoming,
+      };
+    });
+  },
 });
 
-export const { setProduct, setProductsBatch, clearProducts } = productsSlice.actions;
+export const { setProduct, setProductsBatch, clearProduct } = productsSlice.actions;
 
 export const productsReducer = productsSlice.reducer;
