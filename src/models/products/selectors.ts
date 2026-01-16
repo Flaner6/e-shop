@@ -5,6 +5,7 @@ export const product = (state: RootState) => state.product;
 
 export const selectProductById = createSelector(
   [product, (_: RootState, id: number) => id],
+
   (productsState, id) => productsState.byId[id]
 );
 
