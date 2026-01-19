@@ -37,8 +37,6 @@ package.json
 README.md
 ```
 
-> Note: Pages router files should live in `src/pages` (or `/pages` at project root). Do not mix `src/app` (App Router) with Pages Router.
-
 ---
 
 ## Getting Started
@@ -89,5 +87,3 @@ Available scripts (from `package.json`):
 - (Optional) Migrate to App Router for RSC/layouts if needed
 
 ---
-
-REMOVED
