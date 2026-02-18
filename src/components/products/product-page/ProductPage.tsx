@@ -1,18 +1,30 @@
+import { useEffect } from "react";
 import { Product } from "@/types/product";
 import { Container, Typography, Box, Chip, Rating, Button } from "@mui/material";
 import { connect } from "react-redux";
 
 import { addCartItem } from "@/models/cart/actions";
 import { selectProductById } from "@/models/products/selectors";
+import { getProductByIdRequested } from "@/models/products/actions";
 import type { RootState } from "@/store/createStore";
 
 type OwnProps = { productId: number };
 type StateProps = { product?: Product };
-type DispatchProps = { addToCart: (p: Product) => void };
+
+type DispatchProps = {
+  requestProduct: (id: number) => void;
+  addToCart: (p: Product) => void;
+};
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const ProductPage: React.FC<Props> = ({ product, addToCart }) => {
+const ProductPage: React.FC<Props> = ({ productId, product, requestProduct, addToCart }) => {
+  useEffect(() => {
+    if (!product) {
+      requestProduct(productId);
+    }
+  }, [productId, product, requestProduct]);
+
   if (!product) {
     return (
       <Container sx={{ py: 4 }}>
@@ -68,14 +80,16 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
   product: selectProductById(state, ownProps.productId),
 });
 
-const addToCart = (product: Product) =>
-  addCartItem({
-    id: String(product.id),
-    title: product.title,
-    price: product.price,
-    image: product.image,
-  });
+const mapDispatchToProps: DispatchProps = {
+  requestProduct: (id: number) => getProductByIdRequested({ id }),
 
-const mapDispatchToProps = { addToCart };
+  addToCart: (product: Product) =>
+    addCartItem({
+      id: String(product.id),
+      title: product.title,
+      price: product.price,
+      image: product.image,
+    }),
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductPage);

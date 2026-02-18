@@ -1,20 +1,38 @@
-import { configureStore } from "@reduxjs/toolkit";
+// src/store/createStore.ts
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
+import { createEpicMiddleware } from "redux-observable";
 
 import { cartReducer } from "@/models/cart/slice";
 import { productsReducer } from "@/models/products/slice";
+import { productsEpic } from "@/models/products/epics";
 
-export const makeStore = () =>
-  configureStore({
-    reducer: {
-      cart: cartReducer,
-      product: productsReducer,
-    },
+const rootReducer = combineReducers({
+  cart: cartReducer,
+  product: productsReducer,
+});
+
+export type RootState = ReturnType<typeof rootReducer>;
+
+export const makeStore = () => {
+  const epicMiddleware = createEpicMiddleware<unknown, unknown, RootState>();
+
+  const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        thunk: false,
+        serializableCheck: false,
+      }).concat(epicMiddleware),
     devTools: process.env.NODE_ENV !== "production",
   });
 
+  epicMiddleware.run(productsEpic);
+
+  return store;
+};
+
 export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];
 
 export const wrapper = createWrapper<AppStore>(makeStore);
