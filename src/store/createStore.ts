@@ -1,11 +1,10 @@
-// src/store/createStore.ts
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 import { createEpicMiddleware } from "redux-observable";
 
 import { cartReducer } from "@/models/cart/slice";
 import { productsReducer } from "@/models/products/slice";
-import { productsEpic } from "@/models/products/epics";
+import { rootEpic } from "./rootEpic";
 
 const rootReducer = combineReducers({
   cart: cartReducer,
@@ -27,7 +26,7 @@ export const makeStore = () => {
     devTools: process.env.NODE_ENV !== "production",
   });
 
-  epicMiddleware.run(productsEpic);
+  epicMiddleware.run(rootEpic);
 
   return store;
 };
