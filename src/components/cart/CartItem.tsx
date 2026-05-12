@@ -2,6 +2,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import Image from "next/image";
 
 import type { CartItem as CartItemType } from "@/models/cart/types";
 
@@ -26,15 +27,14 @@ const CartItem: React.FC<CartItemProps> = ({ item, onRemove, onIncrement, onDecr
       }}
     >
       {item.image && (
-        <Box
-          component="img"
+        <Image
           src={item.image}
           alt={item.title}
-          sx={{
-            width: 56,
-            height: 56,
+          width={56}
+          height={56}
+          style={{
             objectFit: "contain",
-            borderRadius: 1,
+            borderRadius: 4,
             flexShrink: 0,
           }}
         />

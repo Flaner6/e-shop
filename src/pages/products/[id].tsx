@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { GetStaticPaths } from "next";
 
 import ConnectedProductPage from "@/components/products/product-page/ProductPage";
@@ -7,11 +8,24 @@ import { setProduct } from "@/models/products/actions";
 import { wrapper } from "@/store/createStore";
 
 type ProductDetailProps = {
-  productId: number;
+  product: Product;
 };
 
-const ProductDetail = ({ productId }: ProductDetailProps) => {
-  return <ConnectedProductPage productId={productId} />;
+const ProductDetail = ({ product }: ProductDetailProps) => {
+  const description = product.description.slice(0, 160);
+  return (
+    <>
+      <Head>
+        <title>{`${product.title} — E-Shop`}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={product.image} />
+        <meta property="og:type" content="product" />
+      </Head>
+      <ConnectedProductPage productId={product.id} />
+    </>
+  );
 };
 
 export default ProductDetail;
@@ -40,7 +54,7 @@ export const getStaticProps = wrapper.getStaticProps((store) => async ({ params 
   store.dispatch(setProduct(product));
 
   return {
-    props: { productId: product.id },
+    props: { product },
     revalidate: 60,
   };
 });

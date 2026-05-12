@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import Image from "next/image";
 import { Product } from "@/types/product";
 import { Container, Typography, Box, Chip, Rating, Button } from "@mui/material";
 import { connect } from "react-redux";
@@ -40,12 +41,16 @@ const ProductPage: React.FC<Props> = ({ productId, product, requestProduct, addT
       </Typography>
 
       <Box sx={{ display: "flex", gap: 4, alignItems: "flex-start" }}>
-        <Box
-          component="img"
-          src={product.image}
-          alt={product.title}
-          sx={{ maxWidth: 200, maxHeight: 200, objectFit: "contain" }}
-        />
+        <Box sx={{ position: "relative", width: 200, height: 200, flexShrink: 0 }}>
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            sizes="200px"
+            style={{ objectFit: "contain" }}
+            priority
+          />
+        </Box>
 
         <Box>
           <Typography variant="h6" color="primary">
