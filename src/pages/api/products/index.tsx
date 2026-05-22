@@ -36,8 +36,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const raw = (await response.json()) as FakeStoreProduct[];
     const products = (Array.isArray(raw) ? raw : []).map(normalizeProduct);
 
+    const rawQ = req.query.q;
+    const q = (Array.isArray(rawQ) ? rawQ[0] : rawQ)?.toLowerCase().trim();
+    const filtered = q
+      ? products.filter(
+          (p) => p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+        )
+      : products;
+
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=600");
-    return res.status(200).json(products);
+    return res.status(200).json(filtered);
   } catch {
     return res.status(502).json({ error: "Upstream unavailable" });
   }

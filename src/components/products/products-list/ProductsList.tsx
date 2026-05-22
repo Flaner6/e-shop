@@ -1,4 +1,4 @@
-import { Container, Typography, List, ListItem } from "@mui/material";
+import { Typography, List, ListItem } from "@mui/material";
 import { ClientTimestamp } from "@/components";
 import Link from "next/link";
 
@@ -18,7 +18,7 @@ export const ProductsList = ({
   showTimestamp = true,
 }: ProductsListProps) => {
   return (
-    <Container sx={{ py: 4 }}>
+    <>
       <Typography variant="h3">{title}</Typography>
       {fetchedAt && <Typography variant="body1">Server-side fetched at: {fetchedAt}</Typography>}
       {showTimestamp && <ClientTimestamp />}
@@ -32,7 +32,7 @@ export const ProductsList = ({
           </ListItem>
         ))}
       </List>
-    </Container>
+    </>
   );
 };
 

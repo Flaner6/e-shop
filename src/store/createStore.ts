@@ -4,11 +4,13 @@ import { createEpicMiddleware } from "redux-observable";
 
 import { cartReducer } from "@/models/cart/slice";
 import { productsReducer } from "@/models/products/slice";
+import { searchReducer } from "@/models/search/slice";
 import { rootEpic } from "./rootEpic";
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   product: productsReducer,
+  search: searchReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
